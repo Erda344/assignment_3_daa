@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Missions 4 and 5. The slides: a directed graph. Cells are 0 .. n-1, slide i goes from s.from()[i] to s.to()[i]
  * and takes s.time()[i]. There are no slides from a cell to itself, and the exit can always be reached from the start.
@@ -19,8 +21,66 @@ public class Zones {
      * Is DAG in Main is 1 when the number of zones equals the number of cells (no cycle), so you do not need a separate check.
      */
     public static int[] kosaraju(Input.Slides s) {
-        // TODO
-        return new int[s.n()];
+        int n = s.n();
+        int[][] from = Graphs.slidesFrom(s);
+        int[][] into = Graphs.slidesInto(s);
+
+        boolean[] visited = new boolean[n];
+        int[] finished = new int[n];
+        int finishedCount = 0;
+        int[] stack = new int[n];
+        int[] nextEdge = new int[n];
+
+        for (int start = 0; start < n; start++) {
+            if (visited[start]) continue;
+
+            int top = 0;
+            stack[0] = start;
+            nextEdge[0] = 0;
+            visited[start] = true;
+
+            while (top >= 0) {
+                int cell = stack[top];
+                if (nextEdge[top] < from[cell].length) {
+                    int slide = from[cell][nextEdge[top]++];
+                    int next = s.to()[slide];
+                    if (!visited[next]) {
+                        visited[next] = true;
+                        stack[++top] = next;
+                        nextEdge[top] = 0;
+                    }
+                } else {
+                    finished[finishedCount++] = cell;
+                    top--;
+                }
+            }
+        }
+
+        int[] zoneOf = new int[n];
+        Arrays.fill(zoneOf, -1);
+        int zone = 0;
+
+        for (int i = finishedCount - 1; i >= 0; i--) {
+            int start = finished[i];
+            if (zoneOf[start] != -1) continue;
+
+            int top = 0;
+            stack[0] = start;
+            zoneOf[start] = zone;
+
+            while (top >= 0) {
+                int cell = stack[top--];
+                for (int slide : into[cell]) {
+                    int next = s.from()[slide];
+                    if (zoneOf[next] == -1) {
+                        zoneOf[next] = zone;
+                        stack[++top] = next;
+                    }
+                }
+            }
+            zone++;
+        }
+        return zoneOf;
     }
 
     /**
