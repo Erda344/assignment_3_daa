@@ -55,11 +55,11 @@ Milliseconds, 5 runs each, from `java -cp out Bench`.
 
 | maze | Kruskal | Prim |
 |---|---|---|
-| 100 x 100 | | |
-| 300 x 300 | | |
-| 1000 x 1000 | | |
+| 100 x 100 | 18 ms | 10 ms |
+| 300 x 300 | 76 ms | 63 ms |
+| 1000 x 1000 | 1163 ms | 1769 ms |
 
-What do the numbers say about how the time grows? Two or three sentences.
+Both algorithms become much slower as the number of cells and walls grows. On the largest maze, sorting all walls made Kruskal take about 1.2 seconds, while the many priority queue operations made Prim take about 1.8 seconds on my computer.
 
 ## Complexity
 
@@ -67,12 +67,12 @@ n is the number of cells, m the number of walls (or slides). Fill in every algor
 
 | algorithm | time | space | assumptions |
 |---|---|---|---|
-| DSU find and union | | | |
-| Kruskal | | | |
-| Prim | | | |
-| DFS | | | |
-| Kosaraju | | | |
-| Route in the zone graph | | | |
+| DSU find and union | amortized `O(alpha(n))` | `O(n)` | union by size and path compression |
+| Kruskal | `O(m log m)` | `O(n + m)` | walls are sorted by cost |
+| Prim | `O(m log n)` | `O(n + m)` | binary priority queue and a connected graph |
+| DFS | `O(n + m)` | `O(n)` | adjacency lists and an iterative stack |
+| Kosaraju | `O(n + m)` | `O(n + m)` | adjacency lists for the graph and its reverse |
+| Route in the zone graph | `O(n + m)` expected | `O(n + m)` | topological zone order and average `O(1)` hash map operations |
 
 ## Before you submit
 
