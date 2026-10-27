@@ -10,8 +10,17 @@ public class Maze {
      * Returns the indexes of the broken walls, in the order of breaking.
      */
     public static int[] breakWalls(Input.Walls w) {
-        // TODO
-        return new int[0];
+        DisjointSet sets = new DisjointSet(w.cells());
+        int[] result = new int[Math.max(0, w.cells() - 1)];
+        int broken = 0;
+
+        for (int i = 0; i < w.count() && broken < result.length; i++) {
+            if (sets.union(w.a()[i], w.b()[i])) {
+                result[broken++] = i;
+            }
+        }
+
+        return result;
     }
 
     /**
